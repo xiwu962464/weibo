@@ -8,6 +8,20 @@ use Auth;
 
 class UsersController extends Controller
 {
+    // except 方法来设定 指定动作 不使用 Auth 中间件进行过滤
+    //only 白名单方法，将只过滤指定动作
+    public function __construct()
+    {
+        $this->middleware('auth', [
+            'except' => ['show', 'create', 'store']
+        ]);
+
+        // 只让未登录用户访问注册页面：
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
+
     public function create()
     {
         return view('users.create');
@@ -42,11 +56,16 @@ class UsersController extends Controller
 
     public function edit(User $user)
     {
+        //  不需要 传递第一个参数，也就是当前登录用户至该方法内，因为框架会自动加载当前登录用户
+        $this->authorize('update', $user);
+
         return view('users.edit', compact('user'));
     }
 
     public function update(User $user, Request $request)
     {
+        $this->authorize('update', $user);
+
         $this->validate($request, [
             'name' => 'required|max:50',
             'password' => 'nullable|confirmed|min:6'
