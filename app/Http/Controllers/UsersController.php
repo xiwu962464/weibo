@@ -36,7 +36,11 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $statuses = $user->statuses()
+                           ->orderBy('created_at', 'desc')
+                           ->paginate(10);
+
+        return view('users.show', compact('user','statuses'));
     }
 
     public function store(Request $request)
@@ -111,8 +115,10 @@ class UsersController extends Controller
         $to = $user->email;
         $subject = "感谢注册 Weibo 应用！请确认你的邮箱。";
 
-        Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
-            // $message->from($from, $name)->to($to)->subject($subject);
+        // Mail::send($view, $data, function ($message) use ($from, $name, $to, $subject) {
+        //     $message->from($from, $name)->to($to)->subject($subject);
+        // });
+        Mail::send($view, $data, function ($message) use ($to, $subject) {
             $message->to($to)->subject($subject);
         });
     }
