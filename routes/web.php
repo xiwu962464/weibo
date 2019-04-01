@@ -56,5 +56,10 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset')->name('passw
  */
 Route::resource('statuses', 'StatusesController', ['only' => ['store', 'destroy']]);
 
-
-
+/*
+ * HTTP 请求    URL                               动作                          作用
+ * GET         /users/{user}/followings    UsersController@followings  显示用户的关注人列表
+ * GET         /users/{user}/followers     UsersController@followers   显示用户的粉丝列表
+ */
+Route::get('/users/{user}/followings', 'UsersController@followings')->name('users.followings');
+Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.followers');
